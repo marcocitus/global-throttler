@@ -2,13 +2,13 @@ package trosc.throttler;
 
 import java.io.IOException;
 
-public class GlobalThrottler {
+public class GlobeThrottler {
 
 	final GlobalEventExchange broadcaster;
 	final MultiEventRateLimiter counters;
 	final int waitTimeMs;
 
-	public GlobalThrottler(int maxRate) throws IOException {
+	public GlobeThrottler(int maxRate) throws IOException {
 		this.counters = new MultiEventRateLimiter(maxRate);
 		this.broadcaster = new GlobalEventExchange(counters);
 		this.broadcaster.start();

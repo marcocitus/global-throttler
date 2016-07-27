@@ -10,10 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -21,19 +20,24 @@ import org.apache.commons.cli.ParseException;
  * Class to stress test a global throttler by periodically kicking off mock
  * events.
  */
-public class HammerGlobalThrottler {
+public class HammerGlobeThrottler {
 
 	final ScheduledExecutorService scheduler;
-	final GlobalThrottler throttler;
+	final GlobeThrottler throttler;
 	final int hammerRate;
 
-	public HammerGlobalThrottler(int hammerRate, GlobalThrottler throttler) throws IOException {
+	public HammerGlobeThrottler(int hammerRate, GlobeThrottler throttler) throws IOException {
 		this.scheduler = Executors.newScheduledThreadPool(16);
 		this.throttler = throttler;
 		this.hammerRate = hammerRate;
 	}
 
 	public void run() {
+		if (hammerRate <= 0) {
+			/* nothing to do */
+			return;
+		}
+		
 		long delay = (long) (1000. / hammerRate);
 		
 		/* 
@@ -50,7 +54,7 @@ public class HammerGlobalThrottler {
 		public void run() {
 			long eventTime = System.currentTimeMillis();
 
-			/* Always hammer key 0 */
+			/* always hammer key 0 */
 			Event event = new Event(0, eventTime);
 
 			if (throttler.canProceed(event)) {
@@ -74,7 +78,7 @@ public class HammerGlobalThrottler {
 
 		try {
 
-			CommandLineParser parser = new GnuParser();
+			CommandLineParser parser = new DefaultParser();
 			CommandLine commandLine = parser.parse(options, argv);
 
 			int maxRate = 2;
@@ -88,13 +92,13 @@ public class HammerGlobalThrottler {
 				hammerRate = Integer.parseInt(commandLine.getOptionValue("hammer-rate"));
 			}
 
-			GlobalThrottler throttler = new GlobalThrottler(maxRate);
-			HammerGlobalThrottler hammer = new HammerGlobalThrottler(hammerRate, throttler);
+			GlobeThrottler throttler = new GlobeThrottler(maxRate);
+			HammerGlobeThrottler hammer = new HammerGlobeThrottler(hammerRate, throttler);
 			hammer.run();
 
 		} catch (ParseException e) {
 			HelpFormatter help = new HelpFormatter();
-			help.printHelp(HammerGlobalThrottler.class.getName(), options, true);
+			help.printHelp(HammerGlobeThrottler.class.getName(), options, true);
 			System.exit(1);
 		} catch (IOException e) {
 			System.err.println(e);
