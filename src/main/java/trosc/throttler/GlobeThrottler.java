@@ -2,6 +2,10 @@ package trosc.throttler;
 
 import java.io.IOException;
 
+/*
+ * GlobeThrottler decides whether the rate of global events stays under a 
+ * particular maximum rate.
+ */
 public class GlobeThrottler {
 
 	final GlobalEventExchange broadcaster;
@@ -12,30 +16,24 @@ public class GlobeThrottler {
 		this.counters = new MultiEventRateLimiter(maxRate);
 		this.broadcaster = new GlobalEventExchange(counters);
 		this.broadcaster.start();
-		this.waitTimeMs = 100;
+		this.waitTimeMs = 150;
 	}
 
 	/*
-	 * canProceedSync checks whether the event with the given key can proceed.
-	 * The function may block for up to to check for other global events.
+	 * Checks whether the event with the given key can proceed.
+	 * 
+	 * This function may block for up to 150ms check for other global events.
 	 */
 	public boolean canProceed(Event event) {
 		EventRateLimiter rateLimiter = counters.getRateLimiter(event.key);
-
-		int rate;
 
 		/*
 		 * Try to count the event, if the counter is already full, it means
 		 * we've already seen the maximum number of events over the last second
 		 * and we bail out early.
 		 */
-		synchronized (rateLimiter) {
-
-			if (!rateLimiter.canProceed(event)) {
-				return false;
-			}
-
-			rate = rateLimiter.rate();
+		if (!rateLimiter.canProceed(event)) {
+			return false;
 		}
 
 		/*

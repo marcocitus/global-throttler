@@ -16,7 +16,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
+ * GlobalEventExchange broadcasts events to and receives events from instances
+ * of GlobalEventExchange on other servers using UDP messages.
  * 
+ * The list of other servers need to be defined in nodes.txt as plain text
+ * IPs (recommended) or host names.
  */
 public class GlobalEventExchange {
 
@@ -48,6 +52,9 @@ public class GlobalEventExchange {
 		}
 	}
 
+	/*
+	 * Start a background thread to listen for UDP messages. 
+	 */
 	public void start() {
 		this.active = true;
 
@@ -74,12 +81,18 @@ public class GlobalEventExchange {
 		}
 	};
 
+	/*
+	 * Stop listening for UDP messages.
+	 */
 	public void stop() {
 		this.active = false;
 
 		serverSocket.close();
 	}
 
+	/*
+	 * Broadcast an event to other nodes.
+	 */
 	public void broadcast(Event event) {
 		broadcast(buildMessage(event));
 	}
