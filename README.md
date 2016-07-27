@@ -8,7 +8,7 @@ GlobeThrottler is probabilistic in the sense that long network delays and failur
 
 # Installation
 
-To compile GlobeThrottler, use the following steps:
+To compile GlobeThrottler, use the following steps (Java 1.8+ required):
 
     $ git clone https://github.com/marcocitus/globe-throttler.git
     ...
