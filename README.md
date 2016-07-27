@@ -1,8 +1,8 @@
 # GlobeThrottler
 
-GlobeThrottler is a proof-of-concept java library that can throttle global events to 1/s or more with minimal decision time. It can be deployed in a set of globally distributed servers to ensure events do not exceed a pre-configured rate globally. 
+GlobeThrottler is a proof-of-concept java library that can throttle global events to 1/s or higher with minimal decision time. It can be deployed in a set of globally distributed servers to ensure events do not exceed a pre-configured rate globally. 
 
-When an event occurs, GlobleThrottler sends UDP packets to other nodes, which can typically be done in under 150ms when using only tier-1 and tier-2 networks. Because GlobeThrottler waits 150ms to take a decision, a node with event A has a high likelihood of seeing all global events that preceeded A before taking a throttling decisions, and other nodes have a high likelihood of seeing A before taking theirs.
+When an event occurs, GlobleThrottler sends UDP packets to other nodes, which can typically be done in under 150ms using only tier-1 and tier-2 networks. Because GlobeThrottler waits 150ms to take a decision, a node with event A has a high likelihood of seeing all global events that preceeded A before taking a throttling decisions, and other nodes have a high likelihood of seeing A before taking theirs.
 
 GlobeThrottler is probabilistic in the sense that long network delays and failures may cause it to miss certain events, temporarily allowing higher rates under certain scenarios. However, this can be made largely independent of rate violations, and redundancy can be added to minimize the probability of failure.
 
